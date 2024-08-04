@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spam Mail Detection</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding-top: 50px;
+      }
+      .container {
+        max-width: 600px;
+      }
+      .card {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <a class="navbar-brand" href="#">Spam Mail Detection</a>
+    </nav>
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Check if an Email is Spam</h4>
+        </div>
+        <div class="card-body">
+          <form id="spam-form">
+            <div class="form-group">
+              <label for="email-text">Email Text</label>
+              <textarea
+                class="form-control"
+                id="email-text"
+                rows="6"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              Check
+            </button>
+          </form>
+          <div
+            id="result"
+            class="alert alert-info mt-3"
+            style="display: none"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      // JavaScript for handling the form submission and displaying the result
+      document
+        .getElementById("spam-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          var emailText = document.getElementById("email-text").value;
+          fetch("/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email_text: emailText }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              var resultDiv = document.getElementById("result");
+              resultDiv.style.display = "block";
+              resultDiv.innerHTML = "The email is " + data.prediction + ".";
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+    </script>
+  </body>
+</html>
